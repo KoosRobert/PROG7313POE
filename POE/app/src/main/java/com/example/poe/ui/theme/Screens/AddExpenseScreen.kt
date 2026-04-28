@@ -1,10 +1,15 @@
 package com.example.poe.ui.theme.Screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.example.poe.data.local.DatabaseProvider
+import com.example.poe.data.local.ExpenseEntity
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -19,6 +24,12 @@ fun AddExpenseScreen(goBack: () -> Unit) {
 
     var errorMessage by remember { mutableStateOf("") }
     var successMessage by remember { mutableStateOf("") }
+
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    val database = DatabaseProvider.getDatabase(context)
+    val expenseDao = database.expenseDao()
 
     Scaffold(
         topBar = {
@@ -130,16 +141,44 @@ fun AddExpenseScreen(goBack: () -> Unit) {
                         else -> {
 
                             errorMessage = ""
-                            successMessage = "Expense saved successfully"
 
-                            // DATABASE SAVE WILL BE ADDED LATER
+                            scope.launch {
 
-                            amount = ""
-                            description = ""
-                            category = ""
-                            date = ""
-                            startTime = ""
-                            endTime = ""
+                                try {
+
+                                    expenseDao.insertExpense(
+                                        ExpenseEntity(
+                                            amount = amount.toDouble(),
+                                            description = description,
+                                            category = category,
+                                            date = date,
+                                            startTime = startTime,
+                                            endTime = endTime
+                                        )
+                                    )
+
+                                    successMessage =
+                                        "Expense saved successfully"
+
+                                    Toast.makeText(
+                                        context,
+                                        "Expense Saved",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+
+                                    amount = ""
+                                    description = ""
+                                    category = ""
+                                    date = ""
+                                    startTime = ""
+                                    endTime = ""
+
+                                } catch (e: Exception) {
+
+                                    errorMessage =
+                                        "Failed to save expense"
+                                }
+                            }
                         }
                     }
                 },
