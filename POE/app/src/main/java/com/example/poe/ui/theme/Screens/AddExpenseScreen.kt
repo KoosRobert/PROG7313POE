@@ -17,6 +17,9 @@ fun AddExpenseScreen(goBack: () -> Unit) {
     var startTime by remember { mutableStateOf("") }
     var endTime by remember { mutableStateOf("") }
 
+    var errorMessage by remember { mutableStateOf("") }
+    var successMessage by remember { mutableStateOf("") }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -91,7 +94,54 @@ fun AddExpenseScreen(goBack: () -> Unit) {
 
             Button(
                 onClick = {
-                    // DATABASE SAVE LATER
+
+                    when {
+
+                        amount.isBlank() -> {
+                            errorMessage = "Amount is required"
+                            successMessage = ""
+                        }
+
+                        description.isBlank() -> {
+                            errorMessage = "Description is required"
+                            successMessage = ""
+                        }
+
+                        category.isBlank() -> {
+                            errorMessage = "Category is required"
+                            successMessage = ""
+                        }
+
+                        date.isBlank() -> {
+                            errorMessage = "Date is required"
+                            successMessage = ""
+                        }
+
+                        startTime.isBlank() -> {
+                            errorMessage = "Start time is required"
+                            successMessage = ""
+                        }
+
+                        endTime.isBlank() -> {
+                            errorMessage = "End time is required"
+                            successMessage = ""
+                        }
+
+                        else -> {
+
+                            errorMessage = ""
+                            successMessage = "Expense saved successfully"
+
+                            // DATABASE SAVE WILL BE ADDED LATER
+
+                            amount = ""
+                            description = ""
+                            category = ""
+                            date = ""
+                            startTime = ""
+                            endTime = ""
+                        }
+                    }
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -99,6 +149,24 @@ fun AddExpenseScreen(goBack: () -> Unit) {
             }
 
             Spacer(modifier = Modifier.height(10.dp))
+
+            if (errorMessage.isNotEmpty()) {
+
+                Text(
+                    text = errorMessage,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+
+            if (successMessage.isNotEmpty()) {
+
+                Text(
+                    text = successMessage,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
 
             Button(
                 onClick = goBack,
