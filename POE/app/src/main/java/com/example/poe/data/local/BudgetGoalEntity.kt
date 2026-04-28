@@ -1,3 +1,4 @@
+// Budget goal entity for min/max spending limits
 package com.example.poe.data.local
 
 import androidx.room.Entity
