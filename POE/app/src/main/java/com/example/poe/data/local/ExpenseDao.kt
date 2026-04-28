@@ -1,8 +1,10 @@
 package com.example.poe.data.local
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 
 @Dao
 interface ExpenseDao {
@@ -25,8 +27,23 @@ interface ExpenseDao {
     @Insert
     suspend fun insertExpense(expense: ExpenseEntity)
 
+    @Update
+    suspend fun updateExpense(expense: ExpenseEntity)
+
+    @Delete
+    suspend fun deleteExpense(expense: ExpenseEntity)
+
     @Query("SELECT * FROM expenses")
     suspend fun getAllExpenses(): List<ExpenseEntity>
+
+    @Query("SELECT * FROM expenses WHERE date BETWEEN :startDate AND :endDate ORDER BY date DESC")
+    suspend fun getExpensesBetweenDates(startDate: String, endDate: String): List<ExpenseEntity>
+
+    @Query("SELECT * FROM expenses WHERE category = :categoryName")
+    suspend fun getExpensesByCategory(categoryName: String): List<ExpenseEntity>
+
+    @Query("SELECT SUM(amount) as total FROM expenses WHERE category = :categoryName AND date BETWEEN :startDate AND :endDate")
+    suspend fun getTotalByCategory(categoryName: String, startDate: String, endDate: String): Double?
 
     // ---------------- CATEGORIES ----------------
 
