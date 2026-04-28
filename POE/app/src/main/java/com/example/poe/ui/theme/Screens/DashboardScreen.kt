@@ -18,12 +18,18 @@ import androidx.compose.ui.unit.dp
 fun DashboardScreen(
     goToAddExpense: () -> Unit,
     goToCategories: () -> Unit,
-    goToReports: () -> Unit
-) {
+    goToReports: () -> Unit,
+    onLogout: () -> Unit
+){
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text("BudgetBuddy", style = MaterialTheme.typography.headlineSmall) },
+                actions = {
+                    TextButton(onClick = onLogout) {
+                        Text("Logout")
+                    }
+                },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 )

@@ -3,6 +3,8 @@ package com.example.poe.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.*
 import com.example.poe.ui.theme.Screens.*
+import androidx.compose.material3.Scaffold
+import androidx.compose.ui.Modifier
 
 @Composable
 fun AppNavigation() {
@@ -50,22 +52,33 @@ fun AppNavigation() {
 
         composable("dashboard") {
 
-            DashboardScreen(
-
-                goToAddExpense = {
-                    navController.navigate("addExpense")
-                },
-
-                goToCategories = {
-                    navController.navigate("categories")
-                },
-
-                goToReports = {
-                    navController.navigate("reports")
+            Scaffold(
+                bottomBar = {
+                    BottomNavBar(navController)
                 }
-            )
-        }
+            ) { paddingValues ->
 
+                DashboardScreen(
+                    goToAddExpense = {
+                        navController.navigate("addExpense")
+                    },
+
+                    goToCategories = {
+                        navController.navigate("categories")
+                    },
+
+                    goToReports = {
+                        navController.navigate("reports")
+                    },
+
+                    onLogout = {
+                        navController.navigate("login") {
+                            popUpTo(0)
+                        }
+                    }
+                )
+            }
+        }
         // ---------------- ADD EXPENSE ----------------
 
         composable("addExpense") {
