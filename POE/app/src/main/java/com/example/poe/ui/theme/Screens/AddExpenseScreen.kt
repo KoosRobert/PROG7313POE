@@ -1,85 +1,110 @@
 package com.example.poe.ui.theme.Screens
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Label
-import androidx.compose.material.icons.filled.AddAPhoto
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Label
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddExpenseScreen(goBack: () -> Unit) {
+
     var amount by remember { mutableStateOf("") }
-    var date by remember { mutableStateOf("Select Date") }
+    var description by remember { mutableStateOf("") }
+    var category by remember { mutableStateOf("") }
+    var date by remember { mutableStateOf("") }
+    var startTime by remember { mutableStateOf("") }
+    var endTime by remember { mutableStateOf("") }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Add Expense") }) }
+        topBar = {
+            TopAppBar(
+                title = { Text("Add Expense") }
+            )
+        }
     ) { padding ->
-        Column(modifier = Modifier.padding(padding).padding(20.dp)) {
 
-            // 1. Amount
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(20.dp)
+        ) {
+
             OutlinedTextField(
                 value = amount,
                 onValueChange = { amount = it },
-                label = { Text("Amount (R)") },
+                label = { Text("Amount") },
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
-            // 2. Date Selection (Required by brief)
-            OutlinedCard(onClick = { /* Placeholder for DatePicker */ }, modifier = Modifier.fillMaxWidth()) {
-                ListItem(
-                    headlineContent = { Text(date) },
-                    leadingContent = { Icon(Icons.Default.DateRange, null) }
-                )
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // 3. Category Selection (Required by brief)
-            OutlinedCard(onClick = { /* Placeholder */ }, modifier = Modifier.fillMaxWidth()) {
-                ListItem(
-                    headlineContent = { Text("Select Category") },
-                    trailingContent = { Icon(Icons.Default.ArrowDropDown, null) }
-                )
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // 4. Description
             OutlinedTextField(
-                value = "", onValueChange = {},
+                value = description,
+                onValueChange = { description = it },
                 label = { Text("Description") },
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
-            // 5. Photo Attachment (Required by brief)
-            OutlinedButton(
-                onClick = { /* Placeholder */ },
+            OutlinedTextField(
+                value = category,
+                onValueChange = { category = it },
+                label = { Text("Category") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            OutlinedTextField(
+                value = date,
+                onValueChange = { date = it },
+                label = { Text("Date") },
+                placeholder = { Text("YYYY-MM-DD") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            OutlinedTextField(
+                value = startTime,
+                onValueChange = { startTime = it },
+                label = { Text("Start Time") },
+                placeholder = { Text("HH:MM") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            OutlinedTextField(
+                value = endTime,
+                onValueChange = { endTime = it },
+                label = { Text("End Time") },
+                placeholder = { Text("HH:MM") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Button(
+                onClick = {
+                    // DATABASE SAVE LATER
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Icon(Icons.Default.AddAPhoto, null)
-                Spacer(Modifier.width(8.dp))
-                Text("Attach Receipt Photo")
+                Text("Save Expense")
             }
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(10.dp))
 
-            Button(onClick = goBack, modifier = Modifier.fillMaxWidth()) {
-                Text("Save Entry")
+            Button(
+                onClick = goBack,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Back")
             }
         }
     }
