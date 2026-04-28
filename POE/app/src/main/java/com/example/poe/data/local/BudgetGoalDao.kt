@@ -1,3 +1,4 @@
+//BudgetGoalDao for CRUD operations on budget goals
 package com.example.poe.data.local
 
 import androidx.room.Dao
