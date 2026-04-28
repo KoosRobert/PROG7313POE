@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.*
 import com.example.poe.ui.theme.Screens.*
 
-
 @Composable
 fun AppNavigation() {
 
@@ -15,49 +14,88 @@ fun AppNavigation() {
         startDestination = "login"
     ) {
 
+        // ---------------- LOGIN ----------------
+
         composable("login") {
+
             LoginScreen(
-                onLoginClick = {
+
+                onLoginSuccess = {
                     navController.navigate("dashboard")
                 },
+
                 onRegisterClick = {
                     navController.navigate("register")
                 }
             )
         }
 
+        // ---------------- REGISTER ----------------
+
+        composable("register") {
+
+            RegisterScreen(
+
+                onRegisterSuccess = {
+                    navController.navigate("dashboard")
+                },
+
+                goToLogin = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // ---------------- DASHBOARD ----------------
+
         composable("dashboard") {
+
             DashboardScreen(
+
                 goToAddExpense = {
                     navController.navigate("addExpense")
                 },
+
                 goToCategories = {
                     navController.navigate("categories")
                 },
+
                 goToReports = {
                     navController.navigate("reports")
                 }
             )
         }
 
+        // ---------------- ADD EXPENSE ----------------
+
         composable("addExpense") {
+
             AddExpenseScreen(
+
                 goBack = {
                     navController.popBackStack()
                 }
             )
         }
+
+        // ---------------- CATEGORIES ----------------
 
         composable("categories") {
+
             CategoriesScreen(
+
                 goBack = {
                     navController.popBackStack()
                 }
             )
         }
 
+        // ---------------- REPORTS ----------------
+
         composable("reports") {
+
             ReportsScreen(
+
                 goBack = {
                     navController.popBackStack()
                 }

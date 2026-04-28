@@ -15,7 +15,12 @@ object DatabaseProvider {
                 context,
                 AppDatabase::class.java,
                 "budget_database"
-            ).build()
+            )
+
+                // FIXES MIGRATION ERRORS
+                .fallbackToDestructiveMigration()
+
+                .build()
         }
 
         return database!!

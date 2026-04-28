@@ -7,9 +7,20 @@ import androidx.room.Query
 @Dao
 interface ExpenseDao {
 
-    // -----------------------------
-    // EXPENSES
-    // -----------------------------
+    // ---------------- USERS ----------------
+
+    @Insert
+    suspend fun insertUser(user: UserEntity)
+
+    @Query(
+        "SELECT * FROM users WHERE username = :username AND password = :password LIMIT 1"
+    )
+    suspend fun loginUser(
+        username: String,
+        password: String
+    ): UserEntity?
+
+    // ---------------- EXPENSES ----------------
 
     @Insert
     suspend fun insertExpense(expense: ExpenseEntity)
@@ -17,9 +28,7 @@ interface ExpenseDao {
     @Query("SELECT * FROM expenses")
     suspend fun getAllExpenses(): List<ExpenseEntity>
 
-    // -----------------------------
-    // CATEGORIES
-    // -----------------------------
+    // ---------------- CATEGORIES ----------------
 
     @Insert
     suspend fun insertCategory(category: CategoryEntity)
