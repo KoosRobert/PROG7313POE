@@ -1,3 +1,4 @@
+//Main database configuration with BudgetGoalEntity
 package com.example.poe.data.local
 
 import android.content.Context
