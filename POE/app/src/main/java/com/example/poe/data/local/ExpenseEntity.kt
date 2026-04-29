@@ -1,6 +1,5 @@
 package com.example.poe.data.local
-//User entity for authentication
-
+//Expense entity for storing all expense transactions
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
