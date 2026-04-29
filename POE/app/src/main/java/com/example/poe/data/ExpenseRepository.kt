@@ -1,3 +1,4 @@
+//Repository pattern implementation for data layer
 companion object {
     @Volatile
     private var INSTANCE: AppDatabase? = null
