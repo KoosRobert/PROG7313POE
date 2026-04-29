@@ -59,6 +59,7 @@ class ExpenseViewModel(application: Application) : AndroidViewModel(application)
     }
 
     // ========== BUDGET GOAL OPERATIONS ==========
+    Adding budget goal operations (insert, update, delete, get by month, get all)
 
     fun insertBudgetGoal(goal: BudgetGoalEntity) = viewModelScope.launch {
         repository.insertBudgetGoal(goal)
