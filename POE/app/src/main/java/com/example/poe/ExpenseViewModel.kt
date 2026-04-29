@@ -1,4 +1,5 @@
 package com.example.poe
+//ViewModel for lifecycle-aware data management
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
