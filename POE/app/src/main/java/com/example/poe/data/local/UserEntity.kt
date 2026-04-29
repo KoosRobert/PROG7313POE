@@ -1,5 +1,5 @@
 package com.example.poe.data.local
-
+//User entity for authentication
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
