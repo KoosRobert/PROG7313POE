@@ -48,6 +48,7 @@ class ExpenseViewModel(application: Application) : AndroidViewModel(application)
     }
 
     // ========== CATEGORY OPERATIONS ==========
+    //Adding category operations (insert, get all categories)
 
     fun insertCategory(category: CategoryEntity) = viewModelScope.launch {
         repository.insertCategory(category)
