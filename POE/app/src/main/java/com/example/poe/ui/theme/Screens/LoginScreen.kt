@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.poe.data.local.DatabaseProvider
+import com.example.poe.data.local.SessionManager
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -25,7 +26,7 @@ fun LoginScreen(
 
 ) {
 
-    var username by remember { mutableStateOf("") }
+    var loginInput by remember { mutableStateOf("") }
 
     var password by remember { mutableStateOf("") }
 
@@ -34,6 +35,8 @@ fun LoginScreen(
     var successMessage by remember { mutableStateOf("") }
 
     val context = LocalContext.current
+
+    val sessionManager = SessionManager(context)
 
     val scope = rememberCoroutineScope()
 
@@ -78,18 +81,16 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // ---------------- USERNAME ----------------
-
             OutlinedTextField(
 
-                value = username,
+                value = loginInput,
 
                 onValueChange = {
-                    username = it
+                    loginInput = it
                 },
 
                 label = {
-                    Text("Username")
+                    Text("Username or Email")
                 },
 
                 modifier = Modifier.fillMaxWidth(),
@@ -98,8 +99,6 @@ fun LoginScreen(
             )
 
             Spacer(modifier = Modifier.height(12.dp))
-
-            // ---------------- PASSWORD ----------------
 
             OutlinedTextField(
 
@@ -119,11 +118,10 @@ fun LoginScreen(
                 modifier = Modifier.fillMaxWidth(),
 
                 shape = RoundedCornerShape(12.dp)
+
             )
 
             Spacer(modifier = Modifier.height(32.dp))
-
-            // ---------------- LOGIN BUTTON ----------------
 
             Button(
 
@@ -131,10 +129,10 @@ fun LoginScreen(
 
                     when {
 
-                        username.isBlank() -> {
+                        loginInput.isBlank() -> {
 
                             errorMessage =
-                                "Username is required"
+                                "Username or Email is required"
 
                             successMessage = ""
                         }
@@ -156,11 +154,15 @@ fun LoginScreen(
                                 try {
 
                                     val user = expenseDao.loginUser(
-                                        username.trim(),
+                                        loginInput.trim(),
                                         password.trim()
                                     )
 
                                     if (user != null) {
+
+                                        sessionManager.saveLogin(
+                                            user.username
+                                        )
 
                                         successMessage =
                                             "Login Successful"
@@ -176,7 +178,7 @@ fun LoginScreen(
                                     } else {
 
                                         errorMessage =
-                                            "Invalid username or password"
+                                            "Invalid username/email or password"
                                     }
 
                                 } catch (e: Exception) {
@@ -200,8 +202,6 @@ fun LoginScreen(
                 Text("Login")
             }
 
-            // ---------------- ERROR MESSAGE ----------------
-
             if (errorMessage.isNotEmpty()) {
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -211,8 +211,6 @@ fun LoginScreen(
                     color = MaterialTheme.colorScheme.error
                 )
             }
-
-            // ---------------- SUCCESS MESSAGE ----------------
 
             if (successMessage.isNotEmpty()) {
 
@@ -225,8 +223,6 @@ fun LoginScreen(
             }
 
             Spacer(modifier = Modifier.height(20.dp))
-
-            // ---------------- REGISTER BUTTON ----------------
 
             TextButton(
 

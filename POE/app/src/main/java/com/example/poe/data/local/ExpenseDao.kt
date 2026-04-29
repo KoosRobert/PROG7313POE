@@ -16,12 +16,23 @@ interface ExpenseDao {
     suspend fun insertUser(user: UserEntity)
 
     @Query(
-        "SELECT * FROM users WHERE username = :username AND password = :password LIMIT 1"
+        """
+        SELECT * FROM users
+        WHERE (username = :loginInput OR email = :loginInput)
+        AND password = :password
+        LIMIT 1
+        """
     )
     suspend fun loginUser(
-        username: String,
+        loginInput: String,
         password: String
     ): UserEntity?
+
+    @Query("SELECT * FROM users WHERE username = :username LIMIT 1")
+    suspend fun getUserByUsername(username: String): UserEntity?
+
+    @Query("SELECT * FROM users WHERE email = :email LIMIT 1")
+    suspend fun getUserByEmail(email: String): UserEntity?
 
     // ---------------- EXPENSES ----------------
 

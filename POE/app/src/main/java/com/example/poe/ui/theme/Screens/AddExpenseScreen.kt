@@ -112,6 +112,22 @@ fun AddExpenseScreen(goBack: () -> Unit) {
                             errorMessage = "Amount is required"
                             successMessage = ""
                         }
+                        //////here
+                        amount.toDoubleOrNull() == null -> {
+
+                            errorMessage =
+                                "Enter a valid numeric amount"
+
+                            successMessage = ""
+                        }
+
+                        amount.toDouble() <= 0 -> {
+
+                            errorMessage =
+                                "Amount must be greater than 0"
+
+                            successMessage = ""
+                        }
 
                         description.isBlank() -> {
                             errorMessage = "Description is required"

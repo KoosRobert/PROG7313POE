@@ -25,17 +25,23 @@ fun RegisterScreen(
 ) {
 
     var email by remember { mutableStateOf("") }
+
     var username by remember { mutableStateOf("") }
+
     var password by remember { mutableStateOf("") }
+
     var confirmPassword by remember { mutableStateOf("") }
 
     var errorMessage by remember { mutableStateOf("") }
+
     var successMessage by remember { mutableStateOf("") }
 
     val context = LocalContext.current
+
     val scope = rememberCoroutineScope()
 
     val database = DatabaseProvider.getDatabase(context)
+
     val expenseDao = database.expenseDao()
 
     Scaffold(
@@ -50,6 +56,7 @@ fun RegisterScreen(
     ) { padding ->
 
         Column(
+
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
@@ -59,6 +66,7 @@ fun RegisterScreen(
             verticalArrangement = Arrangement.Center,
 
             horizontalAlignment = Alignment.CenterHorizontally
+
         ) {
 
             Text(
@@ -76,15 +84,21 @@ fun RegisterScreen(
             // ---------------- EMAIL ----------------
 
             OutlinedTextField(
+
                 value = email,
+
                 onValueChange = {
                     email = it
                 },
+
                 label = {
                     Text("Email Address")
                 },
+
                 modifier = Modifier.fillMaxWidth(),
+
                 shape = RoundedCornerShape(12.dp)
+
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -92,15 +106,21 @@ fun RegisterScreen(
             // ---------------- USERNAME ----------------
 
             OutlinedTextField(
+
                 value = username,
+
                 onValueChange = {
                     username = it
                 },
+
                 label = {
                     Text("Username")
                 },
+
                 modifier = Modifier.fillMaxWidth(),
+
                 shape = RoundedCornerShape(12.dp)
+
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -108,17 +128,24 @@ fun RegisterScreen(
             // ---------------- PASSWORD ----------------
 
             OutlinedTextField(
+
                 value = password,
+
                 onValueChange = {
                     password = it
                 },
+
                 label = {
                     Text("Password")
                 },
+
                 visualTransformation =
                     PasswordVisualTransformation(),
+
                 modifier = Modifier.fillMaxWidth(),
+
                 shape = RoundedCornerShape(12.dp)
+
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -126,17 +153,24 @@ fun RegisterScreen(
             // ---------------- CONFIRM PASSWORD ----------------
 
             OutlinedTextField(
+
                 value = confirmPassword,
+
                 onValueChange = {
                     confirmPassword = it
                 },
+
                 label = {
                     Text("Confirm Password")
                 },
+
                 visualTransformation =
                     PasswordVisualTransformation(),
+
                 modifier = Modifier.fillMaxWidth(),
+
                 shape = RoundedCornerShape(12.dp)
+
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -198,6 +232,22 @@ fun RegisterScreen(
                             successMessage = ""
                         }
 
+                        !password.any { it.isUpperCase() } -> {
+
+                            errorMessage =
+                                "Password needs at least 1 uppercase letter"
+
+                            successMessage = ""
+                        }
+
+                        !password.any { it.isDigit() } -> {
+
+                            errorMessage =
+                                "Password needs at least 1 number"
+
+                            successMessage = ""
+                        }
+
                         confirmPassword.isBlank() -> {
 
                             errorMessage =
@@ -222,11 +272,46 @@ fun RegisterScreen(
 
                                 try {
 
+                                    // CHECK EXISTING USERNAME
+
+                                    val existingUsername =
+                                        expenseDao.getUserByUsername(
+                                            username.trim()
+                                        )
+
+                                    if (existingUsername != null) {
+
+                                        errorMessage =
+                                            "Username already exists"
+
+                                        return@launch
+                                    }
+
+                                    // CHECK EXISTING EMAIL
+
+                                    val existingEmail =
+                                        expenseDao.getUserByEmail(
+                                            email.trim()
+                                        )
+
+                                    if (existingEmail != null) {
+
+                                        errorMessage =
+                                            "Email already registered"
+
+                                        return@launch
+                                    }
+
+                                    // INSERT USER
+
                                     expenseDao.insertUser(
 
                                         UserEntity(
+
                                             email = email.trim(),
+
                                             username = username.trim(),
+
                                             password = password.trim()
                                         )
                                     )

@@ -31,7 +31,6 @@ fun BottomNavBar(navController: NavController) {
 
                     navController.navigate(item.route) {
 
-                        // Prevent stacking screens
                         popUpTo("dashboard") {
                             saveState = true
                         }

@@ -1,19 +1,25 @@
 package com.example.poe.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.*
-import com.example.poe.ui.theme.Screens.*
 import androidx.compose.material3.Scaffold
-import androidx.compose.ui.Modifier
+import com.example.poe.data.local.SessionManager
+import com.example.poe.ui.theme.Screens.*
 
 @Composable
 fun AppNavigation() {
 
     val navController = rememberNavController()
+    val context = LocalContext.current
+    val sessionManager = SessionManager(context)
+
+    val startDestination =
+        if (sessionManager.isLoggedIn()) "dashboard" else "login"
 
     NavHost(
         navController = navController,
-        startDestination = "login"
+        startDestination = startDestination
     ) {
 
         // ---------------- LOGIN ----------------
@@ -23,7 +29,11 @@ fun AppNavigation() {
             LoginScreen(
 
                 onLoginSuccess = {
-                    navController.navigate("dashboard")
+
+                    navController.navigate("dashboard") {
+
+                        popUpTo("login") { inclusive = true }
+                    }
                 },
 
                 onRegisterClick = {
@@ -39,7 +49,11 @@ fun AppNavigation() {
             RegisterScreen(
 
                 onRegisterSuccess = {
-                    navController.navigate("dashboard")
+
+                    navController.navigate("login") {
+
+                        popUpTo("register") { inclusive = true }
+                    }
                 },
 
                 goToLogin = {
@@ -56,9 +70,10 @@ fun AppNavigation() {
                 bottomBar = {
                     BottomNavBar(navController)
                 }
-            ) { paddingValues ->
+            ) { _ ->
 
                 DashboardScreen(
+
                     goToAddExpense = {
                         navController.navigate("addExpense")
                     },
@@ -72,6 +87,9 @@ fun AppNavigation() {
                     },
 
                     onLogout = {
+
+                        sessionManager.logout()
+
                         navController.navigate("login") {
                             popUpTo(0)
                         }
@@ -79,39 +97,28 @@ fun AppNavigation() {
                 )
             }
         }
+
         // ---------------- ADD EXPENSE ----------------
 
         composable("addExpense") {
-
             AddExpenseScreen(
-
-                goBack = {
-                    navController.popBackStack()
-                }
+                goBack = { navController.popBackStack() }
             )
         }
 
         // ---------------- CATEGORIES ----------------
 
         composable("categories") {
-
             CategoriesScreen(
-
-                goBack = {
-                    navController.popBackStack()
-                }
+                goBack = { navController.popBackStack() }
             )
         }
 
         // ---------------- REPORTS ----------------
 
         composable("reports") {
-
             ReportsScreen(
-
-                goBack = {
-                    navController.popBackStack()
-                }
+                goBack = { navController.popBackStack() }
             )
         }
     }

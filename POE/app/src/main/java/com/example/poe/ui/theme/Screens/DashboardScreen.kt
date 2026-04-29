@@ -3,7 +3,6 @@ package com.example.poe.ui.theme.Screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.List
@@ -20,11 +19,16 @@ fun DashboardScreen(
     goToCategories: () -> Unit,
     goToReports: () -> Unit,
     onLogout: () -> Unit
-){
+) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("BudgetBuddy", style = MaterialTheme.typography.headlineSmall) },
+                title = {
+                    Text(
+                        "BudgetBuddy",
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                },
                 actions = {
                     TextButton(onClick = onLogout) {
                         Text("Logout")
@@ -42,16 +46,19 @@ fun DashboardScreen(
                 text = { Text("Add Expense") }
             )
         }
-    ) { padding ->
+    ) { paddingValues ->   // ✅ FIXED NAME
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
+                .padding(paddingValues)   // ✅ IMPORTANT FIX
                 .padding(horizontal = 20.dp)
         ) {
+
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Financial Summary Card
+            // ---------------- SUMMARY CARD ----------------
+
             ElevatedCard(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.elevatedCardColors(
@@ -59,22 +66,32 @@ fun DashboardScreen(
                 )
             ) {
                 Column(modifier = Modifier.padding(24.dp)) {
-                    Text("Remaining Balance", style = MaterialTheme.typography.labelLarge)
+
+                    Text(
+                        "Remaining Balance",
+                        style = MaterialTheme.typography.labelLarge
+                    )
+
                     Text(
                         "R6,500.00",
                         style = MaterialTheme.typography.displaySmall,
                         color = MaterialTheme.colorScheme.primary
                     )
+
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // Visual Budget Progress
                     LinearProgressIndicator(
                         progress = { 0.35f },
-                        modifier = Modifier.fillMaxWidth().height(8.dp),
-                        strokeCap = StrokeCap.Round,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(8.dp),
+                        strokeCap = StrokeCap.Round
                     )
+
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text("Spent: R3,500", style = MaterialTheme.typography.bodySmall)
@@ -84,31 +101,51 @@ fun DashboardScreen(
             }
 
             Spacer(modifier = Modifier.height(32.dp))
-            Text("Quick Actions", style = MaterialTheme.typography.titleMedium)
+
+            Text(
+                "Quick Actions",
+                style = MaterialTheme.typography.titleMedium
+            )
+
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Professional Navigation Grid/List
+            // ---------------- CATEGORIES ----------------
+
             OutlinedCard(
                 onClick = goToCategories,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
             ) {
                 ListItem(
                     headlineContent = { Text("Categories") },
                     supportingContent = { Text("Manage where your money goes") },
-                    leadingContent = { Icon(Icons.Default.List, contentDescription = null) },
-                    trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null) }
+                    leadingContent = {
+                        Icon(Icons.Default.List, contentDescription = null)
+                    },
+                    trailingContent = {
+                        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null)
+                    }
                 )
             }
 
+            // ---------------- REPORTS ----------------
+
             OutlinedCard(
                 onClick = goToReports,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
             ) {
                 ListItem(
                     headlineContent = { Text("Spending Reports") },
                     supportingContent = { Text("Analyze monthly trends") },
-                    leadingContent = { Icon(Icons.Default.Info, contentDescription = null) },
-                    trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null) }
+                    leadingContent = {
+                        Icon(Icons.Default.Info, contentDescription = null)
+                    },
+                    trailingContent = {
+                        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null)
+                    }
                 )
             }
         }
