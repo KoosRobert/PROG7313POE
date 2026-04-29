@@ -17,3 +17,4 @@ companion object {
 }
 //Adding expense CRUD operations (insert, update, delete, get all)
 //Adding category operations (insert, get all categories)
+//Adding budget goal operations (insert, update, delete, get by month, get all)
