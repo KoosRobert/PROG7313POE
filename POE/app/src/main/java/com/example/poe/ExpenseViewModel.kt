@@ -21,6 +21,7 @@ class ExpenseViewModel(application: Application) : AndroidViewModel(application)
     }
 
     // ========== EXPENSE OPERATIONS ==========
+    //Adding expense operations (insert, update, delete, get all, date filtering, category totals)
 
     fun insertExpense(expense: ExpenseEntity) = viewModelScope.launch {
         repository.insertExpense(expense)
