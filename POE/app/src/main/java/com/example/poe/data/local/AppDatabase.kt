@@ -1,28 +1,34 @@
-//Main database configuration with BudgetGoalEntity
 package com.example.poe.data.local
 
-import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import android.content.Context
 
+/**
+ * Room Database class for the BudgetBuddy app
+ * Handles all database entities and provides DAO access
+ */
 @Database(
     entities = [
-        ExpenseEntity::class,
-        CategoryEntity::class,
-        UserEntity::class,
-        BudgetGoalEntity::class
+        UserEntity::class,      // User accounts
+        ExpenseEntity::class,    // Expense records
+        CategoryEntity::class,   // Expense categories
+        BudgetGoalEntity::class  // Monthly budget goals
     ],
-    version = 3
+    version = 1,
+    exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
 
+    // Abstract method to access DAO
     abstract fun expenseDao(): ExpenseDao
-    abstract fun budgetGoalDao(): BudgetGoalDao
 
     companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null
+
+        //Singleton pattern to ensure only one database instance exists
 
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {

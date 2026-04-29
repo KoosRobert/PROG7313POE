@@ -1,5 +1,4 @@
 package com.example.poe
-//ViewModel for lifecycle-aware data management
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -11,17 +10,23 @@ import com.example.poe.data.local.CategoryEntity
 import com.example.poe.data.local.ExpenseEntity
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel for Expense-related UI data
+ * Survives configuration changes and provides lifecycle-aware data
+ */
 class ExpenseViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: ExpenseRepository
 
     init {
+        // Initialize database and repository
         val database = AppDatabase.getDatabase(application)
-        repository = ExpenseRepository(database)
+        val expenseDao = database.expenseDao()
+        repository = ExpenseRepository(expenseDao)
     }
 
     // ========== EXPENSE OPERATIONS ==========
-    //Adding expense operations (insert, update, delete, get all, date filtering, category totals)
+    // These functions are called from UI to manage expense data
 
     fun insertExpense(expense: ExpenseEntity) = viewModelScope.launch {
         repository.insertExpense(expense)
@@ -35,31 +40,23 @@ class ExpenseViewModel(application: Application) : AndroidViewModel(application)
         repository.deleteExpense(expense)
     }
 
-    suspend fun getAllExpenses(): List<ExpenseEntity> {
-        return repository.getAllExpenses()
-    }
+    suspend fun getAllExpenses(): List<ExpenseEntity> = repository.getAllExpenses()
 
-    suspend fun getExpensesBetweenDates(startDate: String, endDate: String): List<ExpenseEntity> {
-        return repository.getExpensesBetweenDates(startDate, endDate)
-    }
+    suspend fun getExpensesBetweenDates(startDate: String, endDate: String): List<ExpenseEntity> =
+        repository.getExpensesBetweenDates(startDate, endDate)
 
-    suspend fun getTotalByCategory(categoryName: String, startDate: String, endDate: String): Double? {
-        return repository.getTotalByCategory(categoryName, startDate, endDate)
-    }
+    suspend fun getTotalByCategory(categoryName: String, startDate: String, endDate: String): Double? =
+        repository.getTotalByCategory(categoryName, startDate, endDate)
 
     // ========== CATEGORY OPERATIONS ==========
-    //Adding category operations (insert, get all categories)
 
     fun insertCategory(category: CategoryEntity) = viewModelScope.launch {
         repository.insertCategory(category)
     }
 
-    suspend fun getAllCategories(): List<CategoryEntity> {
-        return repository.getAllCategories()
-    }
+    suspend fun getAllCategories(): List<CategoryEntity> = repository.getAllCategories()
 
     // ========== BUDGET GOAL OPERATIONS ==========
-    Adding budget goal operations (insert, update, delete, get by month, get all)
 
     fun insertBudgetGoal(goal: BudgetGoalEntity) = viewModelScope.launch {
         repository.insertBudgetGoal(goal)
@@ -73,11 +70,8 @@ class ExpenseViewModel(application: Application) : AndroidViewModel(application)
         repository.deleteBudgetGoal(goal)
     }
 
-    suspend fun getBudgetGoalForMonth(month: Int, year: Int): BudgetGoalEntity? {
-        return repository.getBudgetGoalForMonth(month, year)
-    }
+    suspend fun getBudgetGoalForMonth(month: String): BudgetGoalEntity? =
+        repository.getBudgetGoalForMonth(month)
 
-    suspend fun getAllBudgetGoals(): List<BudgetGoalEntity> {
-        return repository.getAllBudgetGoals()
-    }
+    suspend fun getAllBudgetGoals(): List<BudgetGoalEntity> = repository.getAllBudgetGoals()
 }

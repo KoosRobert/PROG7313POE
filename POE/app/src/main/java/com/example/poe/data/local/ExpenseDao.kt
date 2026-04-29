@@ -1,4 +1,3 @@
-//Database intermp
 package com.example.poe.data.local
 
 import androidx.room.Dao
@@ -6,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ExpenseDao {
@@ -35,10 +35,10 @@ interface ExpenseDao {
     suspend fun deleteExpense(expense: ExpenseEntity)
 
     @Query("SELECT * FROM expenses")
-    suspend fun getAllExpenses(): List<ExpenseEntity>
+    fun getAllExpenses(): Flow<List<ExpenseEntity>>
 
     @Query("SELECT * FROM expenses WHERE date BETWEEN :startDate AND :endDate ORDER BY date DESC")
-    suspend fun getExpensesBetweenDates(startDate: String, endDate: String): List<ExpenseEntity>
+    fun getExpensesBetweenDates(startDate: String, endDate: String): Flow<List<ExpenseEntity>>
 
     @Query("SELECT * FROM expenses WHERE category = :categoryName")
     suspend fun getExpensesByCategory(categoryName: String): List<ExpenseEntity>
@@ -52,5 +52,22 @@ interface ExpenseDao {
     suspend fun insertCategory(category: CategoryEntity)
 
     @Query("SELECT * FROM categories")
-    suspend fun getAllCategories(): List<CategoryEntity>
+    fun getAllCategories(): Flow<List<CategoryEntity>>
+
+    // ---------------- BUDGET GOALS ----------------
+
+    @Insert
+    suspend fun insertBudgetGoal(budgetGoal: BudgetGoalEntity)
+
+    @Update
+    suspend fun updateBudgetGoal(budgetGoal: BudgetGoalEntity)
+
+    @Delete
+    suspend fun deleteBudgetGoal(budgetGoal: BudgetGoalEntity)
+
+    @Query("SELECT * FROM budget_goals WHERE month = :month")
+    fun getBudgetGoalByMonth(month: String): Flow<BudgetGoalEntity?>
+
+    @Query("SELECT * FROM budget_goals")
+    fun getAllBudgetGoals(): Flow<List<BudgetGoalEntity>>
 }
