@@ -1,18 +1,20 @@
 package com.example.poe.ui.theme.Screens
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.example.poe.data.local.DatabaseProvider
+import com.example.poe.data.local.SessionManager
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,6 +33,55 @@ fun DashboardScreen(
     onThemeToggle: () -> Unit
 
 ) {
+
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    val database = DatabaseProvider.getDatabase(context)
+    val dao = database.expenseDao()
+
+    val sessionManager = SessionManager(context)
+
+    val loggedInUsername =
+        sessionManager.getLoggedInUser()
+
+    var income by remember { mutableStateOf("") }
+    var minGoal by remember { mutableStateOf("") }
+    var maxGoal by remember { mutableStateOf("") }
+
+    var successMessage by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf("") }
+
+    var remainingBalance by remember { mutableStateOf(0.0) }
+
+    // ---------------- LOAD USER DATA ----------------
+
+    LaunchedEffect(Unit) {
+
+        if (loggedInUsername != null) {
+
+            val user =
+                dao.getLoggedInUser(loggedInUsername)
+
+            if (user != null) {
+
+                income =
+                    if (user.income == 0.0) ""
+                    else user.income.toString()
+
+                minGoal =
+                    if (user.minGoal == 0.0) ""
+                    else user.minGoal.toString()
+
+                maxGoal =
+                    if (user.maxGoal == 0.0) ""
+                    else user.maxGoal.toString()
+
+                remainingBalance =
+                    user.income
+            }
+        }
+    }
 
     Scaffold(
 
@@ -53,7 +104,6 @@ fun DashboardScreen(
                     ) {
 
                         Icon(
-
                             imageVector =
                                 if (darkMode)
                                     Icons.Default.LightMode
@@ -70,13 +120,7 @@ fun DashboardScreen(
 
                         Text("Logout")
                     }
-                },
-
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-
-                    containerColor =
-                        MaterialTheme.colorScheme.primaryContainer
-                )
+                }
             )
         },
 
@@ -87,11 +131,7 @@ fun DashboardScreen(
                 onClick = goToAddExpense,
 
                 icon = {
-
-                    Icon(
-                        Icons.Default.Add,
-                        contentDescription = null
-                    )
+                    Icon(Icons.Default.Add, null)
                 },
 
                 text = {
@@ -107,23 +147,15 @@ fun DashboardScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 20.dp)
+                .padding(20.dp)
+                .verticalScroll(rememberScrollState())
 
         ) {
-
-            Spacer(modifier = Modifier.height(24.dp))
 
             // ---------------- SUMMARY CARD ----------------
 
             ElevatedCard(
-
-                modifier = Modifier.fillMaxWidth(),
-
-                colors = CardDefaults.elevatedCardColors(
-
-                    containerColor =
-                        MaterialTheme.colorScheme.surfaceVariant
-                )
+                modifier = Modifier.fillMaxWidth()
             ) {
 
                 Column(
@@ -131,29 +163,30 @@ fun DashboardScreen(
                 ) {
 
                     Text(
-
                         "Remaining Balance",
-
-                        style =
-                            MaterialTheme.typography.labelLarge
+                        style = MaterialTheme.typography.labelLarge
                     )
 
                     Text(
-
-                        "R6,500.00",
-
-                        style =
-                            MaterialTheme.typography.displaySmall,
-
-                        color =
-                            MaterialTheme.colorScheme.primary
+                        "R %.2f".format(remainingBalance),
+                        style = MaterialTheme.typography.displaySmall,
+                        color = MaterialTheme.colorScheme.primary
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
 
                     LinearProgressIndicator(
+                        progress = {
 
-                        progress = { 0.35f },
+                            val max =
+                                maxGoal.toFloatOrNull() ?: 1f
+
+                            val current =
+                                remainingBalance.toFloat()
+
+                            (current / max)
+                                .coerceIn(0f, 1f)
+                        },
 
                         modifier = Modifier
                             .fillMaxWidth()
@@ -162,54 +195,178 @@ fun DashboardScreen(
                         strokeCap = StrokeCap.Round
                     )
 
-                    Row(
+                    Spacer(modifier = Modifier.height(12.dp))
 
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 8.dp),
+                    Text(
+                        "Min Goal: R$minGoal"
+                    )
 
-                        horizontalArrangement =
-                            Arrangement.SpaceBetween
-
-                    ) {
-
-                        Text(
-                            "Spent: R3,500",
-                            style =
-                                MaterialTheme.typography.bodySmall
-                        )
-
-                        Text(
-                            "Limit: R10,000",
-                            style =
-                                MaterialTheme.typography.bodySmall
-                        )
-                    }
+                    Text(
+                        "Max Goal: R$maxGoal"
+                    )
                 }
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-            Text(
+            // ---------------- INCOME ----------------
 
-                "Quick Actions",
+            OutlinedTextField(
 
-                style =
-                    MaterialTheme.typography.titleMedium
+                value = income,
+
+                onValueChange = {
+                    income = it
+                },
+
+                label = {
+                    Text("Monthly Income")
+                },
+
+                modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-            // ---------------- CATEGORIES ----------------
+            // ---------------- MIN GOAL ----------------
+
+            OutlinedTextField(
+
+                value = minGoal,
+
+                onValueChange = {
+                    minGoal = it
+                },
+
+                label = {
+                    Text("Minimum Goal")
+                },
+
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // ---------------- MAX GOAL ----------------
+
+            OutlinedTextField(
+
+                value = maxGoal,
+
+                onValueChange = {
+                    maxGoal = it
+                },
+
+                label = {
+                    Text("Maximum Goal")
+                },
+
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // ---------------- SAVE BUTTON ----------------
+
+            Button(
+
+                onClick = {
+
+                    when {
+
+                        income.isBlank() -> {
+                            errorMessage =
+                                "Income is required"
+                        }
+
+                        minGoal.isBlank() -> {
+                            errorMessage =
+                                "Minimum goal is required"
+                        }
+
+                        maxGoal.isBlank() -> {
+                            errorMessage =
+                                "Maximum goal is required"
+                        }
+
+                        else -> {
+
+                            scope.launch {
+
+                                try {
+
+                                    dao.updateUserGoals(
+
+                                        username =
+                                            loggedInUsername ?: "",
+
+                                        income =
+                                            income.toDouble(),
+
+                                        minGoal =
+                                            minGoal.toDouble(),
+
+                                        maxGoal =
+                                            maxGoal.toDouble()
+                                    )
+
+                                    remainingBalance =
+                                        income.toDouble()
+
+                                    successMessage =
+                                        "Goals saved successfully"
+
+                                    errorMessage = ""
+
+                                } catch (e: Exception) {
+
+                                    errorMessage =
+                                        "Failed to save goals"
+                                }
+                            }
+                        }
+                    }
+                },
+
+                modifier = Modifier.fillMaxWidth()
+
+            ) {
+
+                Text("Save Goals")
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            if (errorMessage.isNotEmpty()) {
+
+                Text(
+                    text = errorMessage,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+
+            if (successMessage.isNotEmpty()) {
+
+                Text(
+                    text = successMessage,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // ---------------- QUICK ACTIONS ----------------
+
+            Text(
+                "Quick Actions",
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedCard(
-
                 onClick = goToCategories,
-
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-
+                modifier = Modifier.fillMaxWidth()
             ) {
 
                 ListItem(
@@ -219,19 +376,14 @@ fun DashboardScreen(
                     },
 
                     supportingContent = {
-                        Text("Manage where your money goes")
+                        Text("Manage categories")
                     },
 
                     leadingContent = {
-
-                        Icon(
-                            Icons.Default.List,
-                            contentDescription = null
-                        )
+                        Icon(Icons.Default.List, null)
                     },
 
                     trailingContent = {
-
                         Icon(
                             Icons.AutoMirrored.Filled.KeyboardArrowRight,
                             null
@@ -240,38 +392,28 @@ fun DashboardScreen(
                 )
             }
 
-            // ---------------- REPORTS ----------------
+            Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedCard(
-
                 onClick = goToReports,
-
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-
+                modifier = Modifier.fillMaxWidth()
             ) {
 
                 ListItem(
 
                     headlineContent = {
-                        Text("Spending Reports")
+                        Text("Reports")
                     },
 
                     supportingContent = {
-                        Text("Analyze monthly trends")
+                        Text("View spending reports")
                     },
 
                     leadingContent = {
-
-                        Icon(
-                            Icons.Default.Info,
-                            contentDescription = null
-                        )
+                        Icon(Icons.Default.Info, null)
                     },
 
                     trailingContent = {
-
                         Icon(
                             Icons.AutoMirrored.Filled.KeyboardArrowRight,
                             null

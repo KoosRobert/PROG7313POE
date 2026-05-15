@@ -16,7 +16,7 @@ import android.content.Context
         CategoryEntity::class,   // Expense categories
         BudgetGoalEntity::class  // Monthly budget goals
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

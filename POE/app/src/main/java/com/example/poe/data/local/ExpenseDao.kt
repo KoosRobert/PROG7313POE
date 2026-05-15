@@ -34,6 +34,31 @@ interface ExpenseDao {
     @Query("SELECT * FROM users WHERE email = :email LIMIT 1")
     suspend fun getUserByEmail(email: String): UserEntity?
 
+    // ---------------- UPDATE USER GOALS ----------------
+
+    @Query("""
+        UPDATE users
+        SET income = :income,
+            minGoal = :minGoal,
+            maxGoal = :maxGoal
+        WHERE username = :username
+    """)
+    suspend fun updateUserGoals(
+        username: String,
+        income: Double,
+        minGoal: Double,
+        maxGoal: Double
+    )
+
+    @Query("""
+        SELECT * FROM users
+        WHERE username = :username
+        LIMIT 1
+    """)
+    suspend fun getLoggedInUser(
+        username: String
+    ): UserEntity?
+
     // ---------------- EXPENSES ----------------
 
     @Insert

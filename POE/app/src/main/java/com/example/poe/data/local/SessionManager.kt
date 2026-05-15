@@ -1,32 +1,52 @@
 package com.example.poe.data.local
 
 import android.content.Context
+import android.content.SharedPreferences
 
 class SessionManager(context: Context) {
 
-    private val prefs =
+    private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences(
-            "budget_session",
+            "budgetbuddy_session",
             Context.MODE_PRIVATE
         )
 
+    // ---------------- SAVE LOGIN ----------------
+
     fun saveLogin(username: String) {
 
-        prefs.edit()
+        sharedPreferences.edit()
+            .putBoolean("is_logged_in", true)
             .putString("username", username)
             .apply()
     }
 
+    // ---------------- CHECK LOGIN ----------------
+
     fun isLoggedIn(): Boolean {
 
-        return prefs.getString(
+        return sharedPreferences.getBoolean(
+            "is_logged_in",
+            false
+        )
+    }
+
+    // ---------------- GET LOGGED IN USER ----------------
+
+    fun getLoggedInUser(): String? {
+
+        return sharedPreferences.getString(
             "username",
             null
-        ) != null
+        )
     }
+
+    // ---------------- LOGOUT ----------------
 
     fun logout() {
 
-        prefs.edit().clear().apply()
+        sharedPreferences.edit()
+            .clear()
+            .apply()
     }
 }

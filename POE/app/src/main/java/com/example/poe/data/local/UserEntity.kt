@@ -1,5 +1,5 @@
 package com.example.poe.data.local
-//User entity for authentication
+
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -13,5 +13,13 @@ data class UserEntity(
 
     val username: String,
 
-    val password: String
+    val password: String,
+
+    // ---------------- NEW FIELDS ----------------
+
+    val income: Double = 0.0,
+
+    val minGoal: Double = 0.0,
+
+    val maxGoal: Double = 0.0
 )
