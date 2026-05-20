@@ -10,23 +10,20 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ExpenseDao {
 
-    // ---------------- USERS ----------------
+    // ════════════════════════════════════════
+    //  USERS
+    // ════════════════════════════════════════
 
     @Insert
     suspend fun insertUser(user: UserEntity)
 
-    @Query(
-        """
+    @Query("""
         SELECT * FROM users
         WHERE (username = :loginInput OR email = :loginInput)
-        AND password = :password
+          AND password  = :password
         LIMIT 1
-        """
-    )
-    suspend fun loginUser(
-        loginInput: String,
-        password: String
-    ): UserEntity?
+    """)
+    suspend fun loginUser(loginInput: String, password: String): UserEntity?
 
     @Query("SELECT * FROM users WHERE username = :username LIMIT 1")
     suspend fun getUserByUsername(username: String): UserEntity?
@@ -34,32 +31,26 @@ interface ExpenseDao {
     @Query("SELECT * FROM users WHERE email = :email LIMIT 1")
     suspend fun getUserByEmail(email: String): UserEntity?
 
-    // ---------------- UPDATE USER GOALS ----------------
-
     @Query("""
         UPDATE users
-        SET income = :income,
-            minGoal = :minGoal,
-            maxGoal = :maxGoal
+        SET income   = :income,
+            minGoal  = :minGoal,
+            maxGoal  = :maxGoal
         WHERE username = :username
     """)
     suspend fun updateUserGoals(
         username: String,
-        income: Double,
-        minGoal: Double,
-        maxGoal: Double
+        income:   Double,
+        minGoal:  Double,
+        maxGoal:  Double
     )
 
-    @Query("""
-        SELECT * FROM users
-        WHERE username = :username
-        LIMIT 1
-    """)
-    suspend fun getLoggedInUser(
-        username: String
-    ): UserEntity?
+    @Query("SELECT * FROM users WHERE username = :username LIMIT 1")
+    suspend fun getLoggedInUser(username: String): UserEntity?
 
-    // ---------------- EXPENSES ----------------
+    // ════════════════════════════════════════
+    //  EXPENSES
+    // ════════════════════════════════════════
 
     @Insert
     suspend fun insertExpense(expense: ExpenseEntity)
@@ -70,27 +61,50 @@ interface ExpenseDao {
     @Delete
     suspend fun deleteExpense(expense: ExpenseEntity)
 
-    @Query("SELECT * FROM expenses")
+    @Query("SELECT * FROM expenses ORDER BY date DESC")
     fun getAllExpenses(): Flow<List<ExpenseEntity>>
 
-    @Query("SELECT * FROM expenses WHERE date BETWEEN :startDate AND :endDate ORDER BY date DESC")
+    /**
+     * Returns expenses whose date string falls between startDate and endDate (inclusive).
+     * Dates must be stored as YYYY-MM-DD so that lexicographic ordering equals chronological.
+     */
+    @Query("""
+        SELECT * FROM expenses
+        WHERE date >= :startDate AND date <= :endDate
+        ORDER BY date DESC
+    """)
     fun getExpensesBetweenDates(startDate: String, endDate: String): Flow<List<ExpenseEntity>>
 
-    @Query("SELECT * FROM expenses WHERE category = :categoryName")
+    @Query("SELECT * FROM expenses WHERE category = :categoryName ORDER BY date DESC")
     suspend fun getExpensesByCategory(categoryName: String): List<ExpenseEntity>
 
-    @Query("SELECT SUM(amount) as total FROM expenses WHERE category = :categoryName AND date BETWEEN :startDate AND :endDate")
-    suspend fun getTotalByCategory(categoryName: String, startDate: String, endDate: String): Double?
+    @Query("""
+        SELECT SUM(amount) as total FROM expenses
+        WHERE category = :categoryName
+          AND date BETWEEN :startDate AND :endDate
+    """)
+    suspend fun getTotalByCategory(
+        categoryName: String,
+        startDate:    String,
+        endDate:      String
+    ): Double?
 
-    // ---------------- CATEGORIES ----------------
+    // ════════════════════════════════════════
+    //  CATEGORIES
+    // ════════════════════════════════════════
 
     @Insert
     suspend fun insertCategory(category: CategoryEntity)
 
-    @Query("SELECT * FROM categories")
+    @Delete
+    suspend fun deleteCategory(category: CategoryEntity)
+
+    @Query("SELECT * FROM categories ORDER BY name ASC")
     fun getAllCategories(): Flow<List<CategoryEntity>>
 
-    // ---------------- BUDGET GOALS ----------------
+    // ════════════════════════════════════════
+    //  BUDGET GOALS
+    // ════════════════════════════════════════
 
     @Insert
     suspend fun insertBudgetGoal(budgetGoal: BudgetGoalEntity)
@@ -104,6 +118,6 @@ interface ExpenseDao {
     @Query("SELECT * FROM budget_goals WHERE month = :month")
     fun getBudgetGoalByMonth(month: String): Flow<BudgetGoalEntity?>
 
-    @Query("SELECT * FROM budget_goals")
+    @Query("SELECT * FROM budget_goals ORDER BY year DESC, month DESC")
     fun getAllBudgetGoals(): Flow<List<BudgetGoalEntity>>
 }
