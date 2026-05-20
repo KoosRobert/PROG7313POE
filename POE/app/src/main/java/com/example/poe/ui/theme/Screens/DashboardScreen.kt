@@ -77,8 +77,19 @@ fun DashboardScreen(
                     if (user.maxGoal == 0.0) ""
                     else user.maxGoal.toString()
 
-                remainingBalance =
-                    user.income
+                // GET ALL EXPENSES
+
+                val expenses =
+                    dao.getAllExpenses()
+
+                expenses.collect { expenseList ->
+
+                    val totalExpenses =
+                        expenseList.sumOf { it.amount }
+
+                    remainingBalance =
+                        user.income - totalExpenses
+                }
             }
         }
     }
