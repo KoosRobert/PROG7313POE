@@ -90,9 +90,12 @@ interface ExpenseDao {
     @Query("SELECT * FROM categories")
     fun getAllCategories(): Flow<List<CategoryEntity>>
 
+<<<<<<< HEAD
     @Query("SELECT * FROM categories")
     suspend fun getCategoriesList(): List<CategoryEntity>
 
+=======
+>>>>>>> main
     // ---------------- BUDGET GOALS ----------------
 
     @Insert

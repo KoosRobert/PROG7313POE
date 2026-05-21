@@ -77,6 +77,7 @@ fun DashboardScreen(
                     if (user.maxGoal == 0.0) ""
                     else user.maxGoal.toString()
 
+<<<<<<< HEAD
                 // GET ALL EXPENSES
 
                 val expenses =
@@ -90,6 +91,10 @@ fun DashboardScreen(
                     remainingBalance =
                         user.income - totalExpenses
                 }
+=======
+                remainingBalance =
+                    user.income
+>>>>>>> main
             }
         }
     }

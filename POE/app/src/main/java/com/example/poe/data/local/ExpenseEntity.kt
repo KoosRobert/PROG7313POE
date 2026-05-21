@@ -1,5 +1,9 @@
 package com.example.poe.data.local
+<<<<<<< HEAD
 
+=======
+//Expense entity for storing all expense transactions
+>>>>>>> main
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -17,5 +21,12 @@ data class ExpenseEntity(
 
     val date: String,
 
+<<<<<<< HEAD
+=======
+    val startTime: String,
+
+    val endTime: String,
+
+>>>>>>> main
     val photoUri: String? = null
 )

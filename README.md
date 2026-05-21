@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # BudgetBuddy – Fix & Improvement Summary
 
 ## Overview
@@ -86,3 +87,7 @@ All screens now follow the same visual rules:
 | `CategoriesScreen.kt` | Updated |
 | `ExpenseDao.kt` | Updated |
 | `AppDatabase.kt` | Updated (version 3 + migration) |
+=======
+# PROG7313POE
+POE
+>>>>>>> main

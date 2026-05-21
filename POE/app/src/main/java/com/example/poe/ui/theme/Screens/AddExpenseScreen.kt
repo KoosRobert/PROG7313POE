@@ -1,10 +1,15 @@
 package com.example.poe.ui.theme.Screens
 
+<<<<<<< HEAD
 import android.app.DatePickerDialog
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+=======
+import android.widget.Toast
+import androidx.compose.foundation.layout.*
+>>>>>>> main
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -13,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.example.poe.data.local.DatabaseProvider
 import com.example.poe.data.local.ExpenseEntity
 import kotlinx.coroutines.launch
+<<<<<<< HEAD
 import java.util.Calendar
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
@@ -88,10 +94,43 @@ fun AddExpenseScreen(
 
         Column(
 
+=======
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AddExpenseScreen(goBack: () -> Unit) {
+
+    var amount by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+    var category by remember { mutableStateOf("") }
+    var date by remember { mutableStateOf("") }
+    var startTime by remember { mutableStateOf("") }
+    var endTime by remember { mutableStateOf("") }
+
+    var errorMessage by remember { mutableStateOf("") }
+    var successMessage by remember { mutableStateOf("") }
+
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    val database = DatabaseProvider.getDatabase(context)
+    val expenseDao = database.expenseDao()
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Add Expense") }
+            )
+        }
+    ) { padding ->
+
+        Column(
+>>>>>>> main
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
                 .padding(20.dp)
+<<<<<<< HEAD
                 .verticalScroll(rememberScrollState())
 
         ) {
@@ -263,11 +302,74 @@ fun AddExpenseScreen(
 
             Button(
 
+=======
+        ) {
+
+            OutlinedTextField(
+                value = amount,
+                onValueChange = { amount = it },
+                label = { Text("Amount") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            OutlinedTextField(
+                value = description,
+                onValueChange = { description = it },
+                label = { Text("Description") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            OutlinedTextField(
+                value = category,
+                onValueChange = { category = it },
+                label = { Text("Category") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            OutlinedTextField(
+                value = date,
+                onValueChange = { date = it },
+                label = { Text("Date") },
+                placeholder = { Text("YYYY-MM-DD") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            OutlinedTextField(
+                value = startTime,
+                onValueChange = { startTime = it },
+                label = { Text("Start Time") },
+                placeholder = { Text("HH:MM") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            OutlinedTextField(
+                value = endTime,
+                onValueChange = { endTime = it },
+                label = { Text("End Time") },
+                placeholder = { Text("HH:MM") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Button(
+>>>>>>> main
                 onClick = {
 
                     when {
 
                         amount.isBlank() -> {
+<<<<<<< HEAD
 
                             errorMessage =
                                 "Amount is required"
@@ -279,6 +381,16 @@ fun AddExpenseScreen(
 
                             errorMessage =
                                 "Enter valid amount"
+=======
+                            errorMessage = "Amount is required"
+                            successMessage = ""
+                        }
+                        //////here
+                        amount.toDoubleOrNull() == null -> {
+
+                            errorMessage =
+                                "Enter a valid numeric amount"
+>>>>>>> main
 
                             successMessage = ""
                         }
@@ -292,36 +404,64 @@ fun AddExpenseScreen(
                         }
 
                         description.isBlank() -> {
+<<<<<<< HEAD
 
                             errorMessage =
                                 "Description required"
 
+=======
+                            errorMessage = "Description is required"
+>>>>>>> main
                             successMessage = ""
                         }
 
                         category.isBlank() -> {
+<<<<<<< HEAD
 
                             errorMessage =
                                 "Category required"
 
+=======
+                            errorMessage = "Category is required"
+>>>>>>> main
                             successMessage = ""
                         }
 
                         date.isBlank() -> {
+<<<<<<< HEAD
 
                             errorMessage =
                                 "Date required"
 
+=======
+                            errorMessage = "Date is required"
+                            successMessage = ""
+                        }
+
+                        startTime.isBlank() -> {
+                            errorMessage = "Start time is required"
+                            successMessage = ""
+                        }
+
+                        endTime.isBlank() -> {
+                            errorMessage = "End time is required"
+>>>>>>> main
                             successMessage = ""
                         }
 
                         else -> {
 
+<<<<<<< HEAD
+=======
+                            errorMessage = ""
+
+>>>>>>> main
                             scope.launch {
 
                                 try {
 
                                     expenseDao.insertExpense(
+<<<<<<< HEAD
 
                                         ExpenseEntity(
 
@@ -353,11 +493,36 @@ fun AddExpenseScreen(
                                         "Expense added successfully"
 
                                     errorMessage = ""
+=======
+                                        ExpenseEntity(
+                                            amount = amount.toDouble(),
+                                            description = description,
+                                            category = category,
+                                            date = date,
+                                            startTime = startTime,
+                                            endTime = endTime
+                                        )
+                                    )
+
+                                    successMessage =
+                                        "Expense saved successfully"
+
+                                    Toast.makeText(
+                                        context,
+                                        "Expense Saved",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+>>>>>>> main
 
                                     amount = ""
                                     description = ""
                                     category = ""
                                     date = ""
+<<<<<<< HEAD
+=======
+                                    startTime = ""
+                                    endTime = ""
+>>>>>>> main
 
                                 } catch (e: Exception) {
 
@@ -368,6 +533,7 @@ fun AddExpenseScreen(
                         }
                     }
                 },
+<<<<<<< HEAD
 
                 modifier = Modifier.fillMaxWidth()
 
@@ -379,10 +545,19 @@ fun AddExpenseScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             // ---------------- ERROR ----------------
+=======
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Save Expense")
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+>>>>>>> main
 
             if (errorMessage.isNotEmpty()) {
 
                 Text(
+<<<<<<< HEAD
 
                     text = errorMessage,
 
@@ -401,12 +576,25 @@ fun AddExpenseScreen(
 
                     color =
                         MaterialTheme.colorScheme.primary
+=======
+                    text = errorMessage,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+
+            if (successMessage.isNotEmpty()) {
+
+                Text(
+                    text = successMessage,
+                    color = MaterialTheme.colorScheme.primary
+>>>>>>> main
                 )
             }
 
             Spacer(modifier = Modifier.height(20.dp))
 
             Button(
+<<<<<<< HEAD
 
                 onClick = goBack,
 
@@ -414,6 +602,11 @@ fun AddExpenseScreen(
 
             ) {
 
+=======
+                onClick = goBack,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+>>>>>>> main
                 Text("Back")
             }
         }
